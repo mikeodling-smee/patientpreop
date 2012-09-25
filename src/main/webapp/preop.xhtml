@@ -1,0 +1,304 @@
+<?xml-stylesheet href="xsltforms/xsltforms.xsl" type="text/xsl"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xf="http://www.w3.org/2002/xforms"
+      xmlns:ev="http://www.w3.org/2001/xml-events">
+   <head>
+      <title>OPFAST</title>
+      <style type="text/css">
+             body {
+				    background-color: white;
+				    float: ;
+				    font-family: verdana,sans;
+				    padding: 10px;
+				}
+				.property {
+				    font-weight: bold;
+				}
+				.group-heading {
+				    color: darkblue;
+				    font-weight: bold;
+				    margin-bottom: 6px;
+				    margin-top: 15px;
+				}
+				.section {
+				    background-color: beige;
+				    border: 1px dotted;
+				    display: block;
+				    margin: 10px;
+				    padding: 4px 10px;
+				}
+				.control {
+				    display: block;
+				    margin: 10px;
+				}
+				.guidance {
+				    color: #8484CC;
+				    font-style: italic;
+				    clear: both;
+				}
+				.inline-question {
+				    display: block;
+				    clear: both;
+				    min-width: 600px;
+				    padding: 8px 5px 8px 15px;
+				}
+				.inline-question:nth-child(odd) {
+				    background:#EEF;
+				}
+				.inline-question:nth-child(even) {
+				    background:#DDD;
+				}
+				.xforms-value {
+				    margin: 2px 0 2px 10px;
+				}
+				.question-radio {
+				    
+				}
+				/* The following declarations cause form controls and their labels
+				to align neatly, as if a two-column table were used */
+				.xforms|group { display: table; }
+				.xforms|input { display: table-row; }
+				.xforms|input > .xforms|label { display: table-cell; }
+				.xforms|input::value { border: thin black solid; display: table-cell; }
+				
+				.xforms-alert {
+				    margin-left: 5px;
+				}
+				.xforms-item {
+				    margin: 10px;
+				}
+				.xforms-item-label {
+				    padding: 0px 0px 0px 8px;
+				}
+				textarea.xforms-value, xforms-textarea, wcp-textarea {
+				    height: 120px;
+				    width: 500px;
+				}
+				.input-seperate-line, .output-seperate-line {
+				    display: block;
+				}
+				.aligned-label {
+				    color: #666666;
+				    display: block;
+				    font-size: 0.9em;
+				    font-style: italic;
+				    text-align: left;
+				}
+      </style>
+      <xf:model id="document-model">
+         <xf:instance id="document" src="preop-model.xml"/>  
+         <!-- http://localhost:8080/cloudharness/listener/cr/assessment -->
+         <xf:submission id="save" method="post" replace="instance" mediatype="text/xml" resource="http://preop.uk-interoperability.org/proxy" omit-xml-declaration="false">
+            <xf:message level="modal" ev:event="xforms-submit-error">A submission error occurred.</xf:message>
+            <xf:action ev:event="xforms-submit-done">
+               <xf:load ev:event="xforms-select" resource="success.xhtml" show="replace"/>
+            </xf:action>
+         </xf:submission>
+         
+          <xf:bind id="Reference"
+                  nodeset="instance('document')/document-meta-data/reference"
+                  required="true()"
+                  type="xs:string"/>
+                  
+         <xf:bind id="DocumentTimeStamp"
+                  nodeset="instance('document')/document-meta-data/creation-timestamp"
+                  calculate="now()"
+                  type="xs:dateTime"
+                  required="false()"/> 
+
+         <!--  Section One -->  
+                   
+         <xf:bind id="PreviousSurgicalProcedure"
+                  nodeset="instance('document')/assessment/section-one/previous-surgical-procedures/@has-previous"
+                  required="false()"
+                  type="xs:string"/>    
+                  
+         <xf:bind id="LastSurgicalProcedureYear"
+                  nodeset="instance('document')/assessment/section-one/previous-surgical-procedures/last-surgical-procedure-year"
+                  relevant="instance('document')/assessment/section-one/previous-surgical-procedures/@has-previous='true'"
+                  type="xs:gYear"/>    
+                  
+         <xf:bind id="PreviousGA"
+                  nodeset="instance('document')/assessment/section-one/previous-surgical-procedures/previous-general-anaesthetic/@had-ga"
+                  relevant="instance('document')/assessment/section-one/previous-surgical-procedures/@has-previous='true'"
+                  type="xs:string"/> 
+         
+         <xf:bind id="PreviousGAProblems"
+                  nodeset="instance('document')/assessment/section-one/previous-surgical-procedures/previous-general-anaesthetic/had-problems"
+                  relevant="instance('document')/assessment/section-one/previous-surgical-procedures/previous-general-anaesthetic/@had-ga='true'"
+                  type="xs:string"/>   
+         
+         <xf:bind id="PreviousGAProblemAllergy"
+                  nodeset="instance('document')/assessment/section-one/previous-surgical-procedures/previous-general-anaesthetic/allergy"
+                  relevant="instance('document')/assessment/section-one/previous-surgical-procedures/previous-general-anaesthetic/had-problems='true'"
+                  type="xs:boolean"/> 
+                  
+         <xf:bind id="PreviousGAProblemAllergySubstance"
+                  nodeset="instance('document')/assessment/section-one/previous-surgical-procedures/previous-general-anaesthetic/allergy-substance"
+                  relevant="instance('document')/assessment/section-one/previous-surgical-procedures/previous-general-anaesthetic/allergy='true'"
+                  type="xs:string"/>   
+         
+         <xf:bind id="PreviousGAIntensiveCare"
+                  nodeset="instance('document')/assessment/section-one/previous-surgical-procedures/previous-general-anaesthetic/needed-intensive-care"
+                  relevant="instance('document')/assessment/section-one/previous-surgical-procedures/previous-general-anaesthetic/allergy='true'"
+                  type="xs:string"/>     
+         
+         <xf:bind id="PreviousGASicknessVomiting"
+                  nodeset="instance('document')/assessment/section-one/previous-surgical-procedures/previous-general-anaesthetic/sickness-vomiting"
+                  relevant="instance('document')/assessment/section-one/previous-surgical-procedures/previous-general-anaesthetic/allergy='true' and instance('document')/assessment/section-one/previous-surgical-procedures/previous-general-anaesthetic/needed-intensive-care='true'"
+                  type="xs:string"/> 
+                  
+         <xf:bind id="PreviousGAOtherProblems"
+                  nodeset="instance('document')/assessment/section-one/previous-surgical-procedures/previous-general-anaesthetic/other-symptoms"
+                  relevant="instance('document')/assessment/section-one/previous-surgical-procedures/previous-general-anaesthetic/allergy='true' and instance('document')/assessment/section-one/previous-surgical-procedures/previous-general-anaesthetic/sickness-vomiting[not(. ='' or .='true')]"
+                  type="xs:string"/>  
+                  
+         <!-- Section Two -->
+         
+         <xf:bind id="IsSmoker"
+                  nodeset="instance('document')/assessment/section-two/social-history/smoking/@is-smoker"
+                  type="xs:string"/>
+                  
+        <xf:bind id="DrinksAlcohol"
+                  nodeset="instance('document')/assessment/section-two/social-history/alcohol-units/@has-alcohol"
+                  type="xs:string"/>
+        
+        <xf:bind id="OtherRecreationalDrugs"
+                  nodeset="instance('document')/assessment/section-two/social-history/other-recreational-drugs/@other-drugs"
+                  type="xs:string"/>
+                  
+      </xf:model>      
+      <xf:model id="reference-data">
+         <xf:instance id="yes-no-unsure" src="reference-data/yes-no-unsure.xml"/>
+         <xf:instance id="yes-no" src="reference-data/yes-no.xml"/>
+      </xf:model>
+   </head>
+   <body>
+        <img src="logo.png"></img>
+        <xf:switch>
+         <xf:case id="stage-1">
+             <xf:group class="section">
+				 <xf:input bind="Reference" incremental="true">
+						<xf:label>Please enter your reference </xf:label>
+				 </xf:input>
+			 </xf:group>
+			 <xf:trigger class="control" ref=".[instance('document')/document-meta-data/reference != '']">
+               <xf:label>Next</xf:label>
+               <xf:toggle case="stage-2" ev:event="DOMActivate"/>
+            </xf:trigger>            
+	       </xf:case>
+	       <xf:case id="stage-2">
+	         <xf:group class="section">
+                 <xf:output value="concat('You entered  ', document-meta-data/reference, ' as your reference')"/>
+             </xf:group>
+             <xf:group class="section">
+                <p class="guidance">Please complete the following questionnaire as accurately and honestly as possible. The information gathered will be sent directly to the Surgeon's secretary on completion - None of the information entered will be stored online. If any problems are identified which may affect the safety of your anaesthetic or surgery, we will contact you to arrange an appointment at the clinic before the day of your operation.</p>
+             </xf:group>
+             <xf:group class="section">
+                <xf:label  class="group-heading">Anaesthetic / Surgical History</xf:label>
+                
+                <xf:select1 bind="PreviousSurgicalProcedure" incremental="true" appearance="full">
+                        <xf:label>Have you ever had an operation / surgical procedure?</xf:label>
+                        <xf:hint>Checking the box indicates that you have had an operation / surgical procedure</xf:hint>
+                        <xf:alert>Please make sure you answer this question</xf:alert>
+                        <xf:help>Check the box if you have ever had an operation / previous surgical procedure (including dental procedure under anaesthetic)</xf:help>
+                        <xf:itemset nodeset="instance('yes-no')/choice" model="reference-data">
+                            <xf:label ref="displayName"/>
+                            <xf:value ref="code"/>
+                        </xf:itemset>
+                 </xf:select1>
+                 <xf:group ref=".[instance('document')/assessment/section-one/previous-surgical-procedures/@has-previous='true']">
+                    <p class="guidance">Please give further details about your previous operations / surgical procedures</p>
+                    <xf:input class="inline-question"  bind="LastSurgicalProcedureYear" incremental="true">
+                        <xf:label>Which year was your last operation (Please give an approximate year if you're not sure)?</xf:label>
+                    </xf:input> 
+                    <xf:select1 class="inline-question" bind="PreviousGA" incremental="true" appearance="full">
+                        <xf:label>Have you had a general anaesthetic before?</xf:label>
+                        <xf:itemset nodeset="instance('yes-no-unsure')/choice" model="reference-data">
+		                    <xf:label ref="displayName"/>
+		                    <xf:value ref="code"/>
+		                </xf:itemset>
+                    </xf:select1>
+                    <xf:select1  class="inline-question" bind="PreviousGAProblems" incremental="true" appearance="full">
+                        <xf:label>Did you ever have problems with your anaesthetic?</xf:label>
+                        <xf:itemset nodeset="instance('yes-no-unsure')/choice" model="reference-data">
+                            <xf:label ref="displayName"/>
+                            <xf:value ref="code"/>
+                        </xf:itemset>
+                    </xf:select1> 
+                    <xf:input  class="inline-question" bind="PreviousGAProblemAllergy" incremental="true">
+                        <xf:label>Did you have an allergic reaction?</xf:label>                        
+                    </xf:input> 
+                    <xf:group ref=".[instance('document')/assessment/section-one/previous-surgical-procedures/previous-general-anaesthetic/allergy='true']">
+	                    <p class="guidance">Please give further details about your allergic reaction</p>
+	                    <xf:input  class="inline-question" bind="PreviousGAProblemAllergySubstance" incremental="true">
+	                        <xf:label>What were you were allergic to (if known)?</xf:label>                        
+	                    </xf:input> 
+	                    <xf:select1  class="inline-question" bind="PreviousGAIntensiveCare" incremental="true" appearance="full">
+	                        <xf:label>Did you require intensive care or critical care after the reaction?</xf:label>
+	                        <xf:itemset nodeset="instance('yes-no-unsure')/choice" model="reference-data">
+                            <xf:label ref="displayName"/>
+                            <xf:value ref="code"/>
+                        </xf:itemset>
+	                    </xf:select1> 
+	                    <xf:select1  class="inline-question" bind="PreviousGASicknessVomiting" incremental="true" appearance="full">
+	                        <xf:label>Did you have sickness / vomiting?</xf:label>
+	                        <xf:itemset nodeset="instance('yes-no-unsure')/choice" model="reference-data">
+                            <xf:label ref="displayName"/>
+                            <xf:value ref="code"/>
+                        </xf:itemset>
+	                    </xf:select1> 
+	                    <xf:input  class="inline-question" bind="PreviousGAOtherProblems" incremental="true">
+	                        <xf:label>Please describe your symptons</xf:label>                        
+	                    </xf:input>
+	                  </xf:group>
+                 </xf:group>                 
+             </xf:group>     
+            <xf:trigger class="control" ref="self::node()[instance('document')/assessment/section-one/previous-surgical-procedures/@has-previous != '']">
+               <xf:label>Next</xf:label>
+               <xf:toggle case="stage-3" ev:event="DOMActivate"/>
+            </xf:trigger>
+	       </xf:case>
+	       <xf:case id="stage-3">
+             <xf:group class="section">
+                 <xf:output value="concat('You entered  ', document-meta-data/reference, ' as your reference')"/>
+             </xf:group>
+             <xf:group class="section">
+                <p class="guidance">Please complete the following questionnaire as accurately and honestly as possible. The information gathered will be sent directly to the Surgeon's secretary on completion - None of the information entered will be stored online. If any problems are identified which may affect the safety of your anaesthetic or surgery, we will contact you to arrange an appointment at the clinic before the day of your operation.</p>
+             </xf:group>
+             <xf:group class="section">
+                <xf:label  class="group-heading">Social History</xf:label>
+				<xf:select1 class="inline-question" bind="IsSmoker"
+					incremental="true" appearance="full">
+					<xf:label>Do you regularly smoke?</xf:label>
+					<xf:itemset nodeset="instance('yes-no')/choice" model="reference-data">
+						<xf:label ref="displayName" />
+						<xf:value ref="code" />
+					</xf:itemset>
+				</xf:select1>
+				<xf:select1 class="inline-question" bind="DrinksAlcohol" incremental="true" appearance="full">
+                    <xf:label>Do you drink alcohol?</xf:label>
+                    <xf:itemset nodeset="instance('yes-no')/choice" model="reference-data">
+                        <xf:label ref="displayName" />
+                        <xf:value ref="code" />
+                    </xf:itemset>
+                </xf:select1>
+                <xf:select1 class="inline-question" bind="OtherRecreationalDrugs" incremental="true" appearance="full">
+                    <xf:label>Do you take any other recreational drugs?</xf:label>
+                    <xf:itemset nodeset="instance('yes-no')/choice" model="reference-data">
+                        <xf:label ref="displayName" />
+                        <xf:value ref="code" />
+                    </xf:itemset>
+                </xf:select1>
+			</xf:group>
+			 <xf:trigger class="control">
+               <xf:label>Previous</xf:label>
+               <xf:toggle case="stage-2" ev:event="DOMActivate"/>
+            </xf:trigger>
+             <xf:submit class="control doc-submit" submission="save" ref=".[instance('document')/assessment/section-two/social-history/smoking/@is-smoker != '' and instance('document')/assessment/section-two/social-history/alcohol-units/@has-alcohol != '' and instance('document')/assessment/section-two/social-history/other-recreational-drugs/@other-drugs != '']">               
+               <xf:label>Submit completed assessment</xf:label>
+            </xf:submit>
+           </xf:case> 
+	    </xf:switch>
+   </body>
+</html>
